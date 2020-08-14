@@ -8,38 +8,173 @@
 	var crepes = new Article('crèpes', 1613, 3.21);
 	var pain = new Article('pain', 1712, .87);
 	
+	// On met les articles dans une liste
+	var products = [boisson_sucree, boisson, eau, aperitif, crepes, pain];
+	
 	// Création du Panier
 	var panier = new Panier();
 	
-	// Création des Lots
-	var l1 = new Lot(boisson, 3);
-	var l2 = new Lot(crepes, 4);
-	var l3 = new Lot(aperitif, 4);
-	
-	// Affiche un récapitulatif du panier
-	function recap(nb) {
-		console.log('%cRÉCAP ' + nb + ' :', 'color:white;background:green;padding:5px;');
+	function addToPanierHTML(lot) {
+		var container = document.createElement('li');
+		var div = document.createElement('div');
+		var a = document.createElement('a');
+		var i = document.createElement('i');
+		var name = document.createTextNode(lot.article.getName() + ' ');
+		var quantity = document.createTextNode('(' + lot.quantity + ')');
+		var icon = document.createTextNode('clear');
 		
-		// Affiche les Articles du Panier et la somme à payer
-		panier.displayList();
-		console.log('Total à payer : ' + panier.getSum().toFixed(2) + ' €');
+		container.setAttribute('class', 'collection-item');
+		container.setAttribute('id', 'lot-' + lot.article.getBarcode());
+		
+		a.setAttribute('href', '#');
+		a.setAttribute('class', 'secondary-content');
+		a.dataset.barcode = lot.article.getBarcode();
+		
+		a.addEventListener(
+			'click',
+			function(e) {
+				e.preventDefault();
+				
+				var barcode = Number.parseInt(this.dataset.barcode, 10);
+				var item = 0;
+				var article, lot;
+				
+				for (; item < panier.list.length; item ++) {
+					lot = panier.list[item];
+					article = lot.article;
+					
+					if (barcode === article.getBarcode()) {
+						lot.removeFrom(panier);
+						
+						document.querySelector('#panier-list').removeChild(document.querySelector('#lot-' + barcode));
+						document.querySelector('#sum').innerHTML = panier.sum.toFixed(2) + ' €';
+						
+						if (panier.sum == 0) viderPanierHTML();
+						
+						return;
+					}
+				}
+			}
+		);
+		
+		i.setAttribute('class', 'material-icons');
+		
+		i.appendChild(icon);
+		a.appendChild(i);
+		
+		div.appendChild(name);
+		div.appendChild(quantity);
+		div.appendChild(a);
+		
+		container.appendChild(div);
+		
+		if (document.querySelector('#empty-panier') != null) document.querySelector('#panier-list').removeChild(document.querySelector('#empty-panier'));
+		
+		document.querySelector('#panier-list').appendChild(container);
+		document.querySelector('#sum').innerHTML = panier.sum.toFixed(2) + ' €';
 	}
 	
-	recap(1);
+	// On affiche les Articles sur la page
+	function articlesHTML() {
+		var item = 0;
+		var article, container, div, input, a, i, name, price, icon;
+		
+		for (; item < products.length; item ++) {
+			article = products[item];
+			
+			container = document.createElement('li');
+			div = document.createElement('div');
+			input = document.createElement('input');
+			a = document.createElement('a');
+			i = document.createElement('i');
+			name = document.createTextNode(article.getName() + ' ');
+			price = document.createTextNode(article.getPrice() + ' € ');
+			icon = document.createTextNode('shopping_cart');
+			
+			container.setAttribute('class', 'collection-item');
+			container.setAttribute('id', 'article-' + article.getBarcode());
+			
+			input.setAttribute('type', 'number');
+			input.setAttribute('id', 'quantity-' + article.getBarcode());
+			input.setAttribute('class', 'browser-default');
+			input.value = 1;
+			
+			a.setAttribute('href', '#');
+			a.setAttribute('class', 'secondary-content');
+			a.dataset.barcode = article.getBarcode();
+			
+			a.addEventListener(
+				'click',
+				function(e) {
+					e.preventDefault();
+					
+					var barcode = Number.parseInt(this.dataset.barcode, 10);
+					var quantity = document.querySelector('#quantity-' + barcode).value;
+					var item = 0;
+					var article, lot;
+					
+					for (; item < products.length; item ++) {
+						article = products[item];
+						
+						if (barcode === article.getBarcode()) {
+							lot = new Lot(article, quantity);
+							
+							lot.addTo(panier);
+							
+							addToPanierHTML(lot);
+							
+							return;
+						}
+					}
+				}
+			);
+			
+			i.setAttribute('class', 'material-icons');
+			
+			i.appendChild(icon);
+			a.appendChild(i);
+			
+			div.appendChild(name);
+			div.appendChild(price);
+			div.appendChild(input);
+			div.appendChild(a);
+			
+			container.appendChild(div);
+			
+			document.querySelector('#product-list').appendChild(container);
+		}
+	} articlesHTML();
 	
-	// Ajout des Lots dans le Panier
-	l1.addTo(panier);
-	l2.addTo(panier);
+	// On affiche le Panier sur la page
+	function initPanierHTML() {
+		var container = document.createElement('li');
+		var defaultText = document.createTextNode('Le panier est vide.');
+		
+		container.setAttribute('class', 'collection-item center-align');
+		container.setAttribute('id', 'empty-panier');
+		
+		if (panier.sum == 0) container.appendChild(defaultText);
+		
+		if (document.querySelector('#empty-panier') == null) document.querySelector('#panier-list').appendChild(container);
+		document.querySelector('#sum').innerHTML = panier.sum.toFixed(2) + ' €';
+	} initPanierHTML();
 	
-	recap(2);
+	function viderPanierHTML() {
+		while (document.querySelector('#panier-list').children.length > 1) {
+			document.querySelector('#panier-list').removeChild(document.querySelector('#panier-list').lastElementChild);
+		}
+		
+		initPanierHTML();
+	}
 	
-	// Retrait du Lot contenant l'Article crepes
-	l2.removeFrom(panier);
-	
-	recap(3);
-	
-	// Ajout du Lot contenant l'Article aperitif
-	l3.addTo(panier);
-	
-	recap(4);
+	document.querySelector('#btn-empty-panier').addEventListener(
+		'click',
+		function(e) {
+			e.preventDefault();
+			
+			panier.emptyList();
+			viderPanierHTML();
+		}
+	);
 }) ();
+
