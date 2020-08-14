@@ -62,6 +62,7 @@ Panier.prototype.getSum = function() {
 * */
 Panier.prototype.emptyList = function() {
 	this.list = [];
+	this.sum = 0;
 }
 
 /* ** Simule le paiement des Articles du Panier.
