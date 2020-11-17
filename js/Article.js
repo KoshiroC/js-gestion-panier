@@ -8,21 +8,21 @@
 * @param Float price Le prix de l'article.
 * */
 function Article(name, barcode, price) {
-	this.name = name;
-	this.barcode = barcode;
-	this.price = price;
+	this.setName(name)
+	this.setBarcode(barcode)
+	this.setPrice(price)
 }
 
-Article.prototype.name = null; // Stocke le nom de l'article
-Article.prototype.barcode = null; // Stocke le code barre de l'article
-Article.prototype.price = null; // Stocke le prix de l'article
+Article.prototype.name = null // Stocke le nom de l'article
+Article.prototype.barcode = null // Stocke le code barre de l'article
+Article.prototype.price = null // Stocke le prix de l'article
 
 /* ** Retourne le nom de l'article.
 * 
 * @return String Le nom de l'article.
 * */
 Article.prototype.getName = function() {
-	return this.name;
+	return this.name
 }
 
 /* ** Modifie le nom de l'article.
@@ -30,7 +30,7 @@ Article.prototype.getName = function() {
 * @param String name Le nouveau nom de l'article.
 * */
 Article.prototype.setName = function(name) {
-	this.name = name;
+	this.name = name
 }
 
 /* ** Retourne le code barre de l'article.
@@ -38,7 +38,7 @@ Article.prototype.setName = function(name) {
 * @return Integer Le code barre de l'article.
 * */
 Article.prototype.getBarcode = function() {
-	return this.barcode;
+	return this.barcode
 }
 
 /* ** Modifie le code barre de l'article.
@@ -46,7 +46,7 @@ Article.prototype.getBarcode = function() {
 * @param Integer barcode Le nouveau code barre de l'article.
 * */
 Article.prototype.setBarcode = function(barcode) {
-	this.barcode = barcode;
+	this.barcode = barcode
 }
 
 /* ** Retourne le prix de l'article.
@@ -54,7 +54,7 @@ Article.prototype.setBarcode = function(barcode) {
 * @return Float Le prix de l'article.
 * */
 Article.prototype.getPrice = function() {
-	return this.price;
+	return this.price
 }
 
 /* ** Modifie le prix de l'article.
@@ -62,5 +62,5 @@ Article.prototype.getPrice = function() {
 * @param Float price Le nouveau prix de l'article.
 * */
 Article.prototype.setPrice = function(price) {
-	this.price = price;
+	this.price = price
 }
